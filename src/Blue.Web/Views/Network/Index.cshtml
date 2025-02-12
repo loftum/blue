@@ -1,0 +1,19 @@
+@model List<Azure.ResourceManager.Network.VirtualNetworkData>
+
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>AddressSpace</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var network in Model)
+    {
+        <tr>
+            <td>@network.Name</td>
+            <td>@network.</td>
+        </tr>
+    }
+    </tbody>
+</table>
