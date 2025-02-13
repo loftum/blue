@@ -46,8 +46,28 @@ public static class Jsons
     {
         options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         options.Converters.Add(new JsonStringEnumConverter());
+        options.Converters.Add(new ResourceIdentifierConverter());
         options.AllowTrailingCommas = true;
         options.ReadCommentHandling = JsonCommentHandling.Skip;
         options.NumberHandling = JsonNumberHandling.AllowReadingFromString;
+    }
+}
+
+public class ResourceIdentifierConverter : JsonConverter<ResourceIdentifier>
+{
+    public override ResourceIdentifier? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var s = reader.GetString();
+        if (s == null)
+        {
+            return null;
+        }
+
+        return new ResourceIdentifier(s);
+    }
+
+    public override void Write(Utf8JsonWriter writer, ResourceIdentifier value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value.ToString());
     }
 }

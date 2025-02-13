@@ -15,19 +15,20 @@
     }
 }
 
-<ul>
+<ul class="no-bullets">
     @foreach (var (id, vnet) in Model.Vnets)
     {
         <li>
+            @id
             @vnet.Id.ResourceGroupName/<b>@vnet.Name</b>: @string.Join(", ", vnet.AddressPrefixes)
             @if (vnet.Peerings.Count > 0)
             {
-                <ul>
+                <ul class="no-bullets">
                     @foreach (var peering in vnet.Peerings)
                     {
                         <li>
-                            @peering.RemoteVnetId.Name
-                            <ul>
+                            p-2-@peering.RemoteVnetId.Name:
+                            <ul class="no-bullets">
                                 <li>Traffic: @Map(peering.Traffic)</li>
                                 <li>VnetAccess: @Map(peering.VnetAccess)</li>
                                 <li>GW transit: @Map(peering.GatewayTransit)</li>

@@ -28,7 +28,7 @@ public sealed class BlueClient
         _db = new LiteDatabase(file.FullName, mapper);
     }
 
-    public Task<List<SubscriptionData>> GetAllSubscriptionsAsync()
+    public Task<List<SubscriptionData>> GetAllSubscriptionsAsync(CancellationToken cancellationToken = default)
     {
         return Task.FromResult(_subscriptions.Select(s => s.Data).ToList());
     }
@@ -74,4 +74,3 @@ public sealed class BlueClient
         return collection.FindAll().ToList();
     }
 }
-

@@ -1,0 +1,14 @@
+@model Blue.Models.NetworkMap
+
+<canvas id="map" class="vnet-canvas" style="height:100%; width: 100%;">
+    
+</canvas>
+<script>
+(function () {
+    const model = @Html.Raw(Json.Serialize(Model));
+    const canvas = document.getElementById("map");
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "red";
+    ctx.fillRect(0, 0, 150, 75);
+})();
+</script>

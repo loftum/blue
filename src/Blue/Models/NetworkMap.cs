@@ -8,11 +8,11 @@ namespace Blue.Models;
 
 public class NetworkMap
 {
-    public Dictionary<ResourceIdentifier, SubscriptionData> Subscriptions { get; init; } = new();
-    public Dictionary<ResourceIdentifier, VirtualNetworkData> VirtualNetworks { get; init; } = new();
-    public Dictionary<ResourceIdentifier, Vnet> Vnets { get; init; } = new();
-    public Dictionary<ResourceIdentifier, PrivateDnsZoneData> PrivateDnsZones { get; init; } = new();
-    public Dictionary<ResourceIdentifier, DnsResolverData> DnsResolvers { get; init; } = new();
+    public Dictionary<string, SubscriptionData> Subscriptions { get; init; } = new();
+    public Dictionary<string, VirtualNetworkData> VirtualNetworks { get; init; } = new();
+    public Dictionary<string, Vnet> Vnets { get; init; } = new();
+    public Dictionary<string, PrivateDnsZoneData> PrivateDnsZones { get; init; } = new();
+    public Dictionary<string, DnsResolverData> DnsResolvers { get; init; } = new();
 }
 
 public class Vnet
