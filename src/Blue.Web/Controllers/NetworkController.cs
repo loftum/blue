@@ -1,7 +1,5 @@
-using Azure.ResourceManager;
-using Azure.ResourceManager.Network;
 using Blue.Core;
-using LiteDB.Queryable;
+using Blue.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blue.Web.Controllers;
@@ -9,40 +7,88 @@ namespace Blue.Web.Controllers;
 [Route("network")]
 public class NetworkController : Controller
 {
-    private readonly BlueStore _store;
-    private readonly ArmClient _client;
+    private readonly BlueClient _client;
 
-    public NetworkController(ArmClient client, BlueStore store)
+    public NetworkController(BlueClient client)
     {
         _client = client;
-        _store = store;
     }
 
     [HttpGet("")]
     public async Task<object> Index()
     {
-        var networks = await _store.Query<VirtualNetworkData>().ToListAsync();
-
-        if (networks.Count == 0)
+        var model = new NetworkMap
         {
-            var subscriptions = _client.GetSubscriptions();
-            foreach (var subscription in subscriptions)
+            Subscriptions = (await _client.GetAllSubscriptionsAsync()).ToDictionary(i => i.Id, i => i),
+            VirtualNetworks = (await _client.GetAllVirtualNetworksAsync()).ToDictionary(i => i.Id, i => i),
+            PrivateDnsZones = (await _client.GetAllPrivateDnsZonesAsync()).ToDictionary(i => i.Id, i => i),
+        };
+
+        var networks = (await _client.GetAllVirtualNetworksAsync()).ToDictionary(v => v.Id, v => v);
+        foreach (var (id, network) in networks)
+        {
+            var vnet = new Vnet
             {
-                await foreach (var network in subscription.GetVirtualNetworksAsync())
+                Id = id,
+                Name = network.Name,
+                AddressPrefixes = network.AddressPrefixes.ToArray()
+            };
+            foreach (var peering in network.VirtualNetworkPeerings)
+            {
+                
+                if (networks.TryGetValue(peering.RemoteVirtualNetworkId, out var remote))
                 {
-                    if (network is { HasData: true })
+                    var remotePeering = remote.VirtualNetworkPeerings.SingleOrDefault(p => p.RemoteVirtualNetworkId == network.Id);
+                    if (remotePeering == null)
                     {
-                        networks.Add(network.Data);    
+                        vnet.Peerings.Add(new VnetPeering
+                        {
+                            Name = peering.Name,
+                            RemoteVnetId = peering.RemoteVirtualNetworkId,
+                            Traffic = GetDirection(peering.AllowForwardedTraffic),
+                            VnetAccess = GetDirection(peering.AllowVirtualNetworkAccess),
+                            GatewayTransit = GetDirection(peering.AllowGatewayTransit),
+                            RemoteGateways = GetDirection(peering.UseRemoteGateways)
+                        });
+                    }
+                    else
+                    {
+                        vnet.Peerings.Add(new VnetPeering
+                        {
+                            Name = peering.Name,
+                            RemoteVnetId = peering.RemoteVirtualNetworkId,
+                            Traffic = GetDirection(peering.AllowForwardedTraffic, remotePeering.AllowForwardedTraffic),
+                            VnetAccess = GetDirection(peering.AllowVirtualNetworkAccess, remotePeering.AllowVirtualNetworkAccess),
+                            GatewayTransit = GetDirection(peering.AllowGatewayTransit, remotePeering.AllowGatewayTransit),
+                            RemoteGateways = GetDirection(peering.UseRemoteGateways, remotePeering.UseRemoteGateways)
+                        });
                     }
                 }
             }
 
-            foreach (var network in networks)
-            {
-                await _store.SaveAsync(network.Id.ToString(), network.Name);
-            }
+            model.Vnets[id] = vnet;
         }
-        
-        return View(networks);
+    
+        return View(model);
+    }
+
+    private static PeeringDirection GetDirection(bool? forward)
+    {
+        return forward == true ? PeeringDirection.Forward : PeeringDirection.Unknown;
+    }
+    
+    private static PeeringDirection GetDirection(bool? forward, bool? backward)
+    {
+        if (forward == null && backward == null)
+        {
+            return PeeringDirection.None;
+        }
+
+        if (forward == true)
+        {
+            return backward == true ? PeeringDirection.BothWays : PeeringDirection.Forward; 
+        }
+
+        return backward == true ? PeeringDirection.Backward : PeeringDirection.None;
     }
 }

@@ -1,0 +1,13 @@
+:root {
+    
+}
+
+html {
+    font-family: monospace; 
+}
+
+.vnet {
+    background: lightgray;
+    border: 1px solid darkgray;
+    box-sizing: border-box;
+}

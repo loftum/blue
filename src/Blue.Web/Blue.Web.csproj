@@ -23,10 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\content\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Blue\Blue.csproj" />
     </ItemGroup>
 

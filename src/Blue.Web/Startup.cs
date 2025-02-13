@@ -24,10 +24,11 @@ public class Startup
         services.AddSingleton<TokenCredential>(credential);
         var mvc = services.AddMvc();
         mvc.AddJsonOptions(o => Jsons.Configure(o.JsonSerializerOptions));
+        mvc.AddRazorRuntimeCompilation();
 
         var client = new ArmClient(credential);
         services.AddSingleton(client);
-        services.AddSingleton<BlueStore>();
+        services.AddSingleton<BlueClient>();
     }
 
     public void Configure(IApplicationBuilder app)

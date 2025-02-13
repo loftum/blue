@@ -1,4 +1,4 @@
-namespace Blue.Core;
+namespace Blue.IO;
 
 internal static class PathTranslator
 {
