@@ -4,16 +4,16 @@ namespace Blue.Core;
 
 public static class BlueClientExtensions
 {
-    public static async Task<NetworkMap> GetNetworkMapAsync(this BlueClient client, CancellationToken cancellationToken = default)
+    public static async Task<NetworkMap> GetNetworkMapAsync(this BlueClient client, bool clearCache, CancellationToken cancellationToken = default)
     {
         var model = new NetworkMap
         {
             Subscriptions = (await client.GetAllSubscriptionsAsync(cancellationToken)).ToDictionary(i => i.Id.ToString(), i => i),
-            VirtualNetworks = (await client.GetAllVirtualNetworksAsync(cancellationToken: cancellationToken)).ToDictionary(i => i.Id.ToString(), i => i),
-            PrivateDnsZones = (await client.GetAllPrivateDnsZonesAsync(cancellationToken: cancellationToken)).ToDictionary(i => i.Id.ToString(), i => i),
+            VirtualNetworks = (await client.GetAllVirtualNetworksAsync(clearCache: clearCache, cancellationToken: cancellationToken)).ToDictionary(i => i.Id.ToString(), i => i),
+            PrivateDnsZones = (await client.GetAllPrivateDnsZonesAsync(clearCache: clearCache, cancellationToken: cancellationToken)).ToDictionary(i => i.Id.ToString(), i => i),
         };
 
-        var networks = (await client.GetAllVirtualNetworksAsync(cancellationToken: cancellationToken)).ToDictionary(v => v.Id, v => v);
+        var networks = (await client.GetAllVirtualNetworksAsync(clearCache: clearCache, cancellationToken: cancellationToken)).ToDictionary(v => v.Id, v => v);
         foreach (var (id, network) in networks)
         {
             var vnet = new Vnet

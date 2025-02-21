@@ -8,12 +8,28 @@ internal static class ArmExtensions
 {
     public static async IAsyncEnumerable<T> GetAll<T>(this List<SubscriptionResource> subscriptions, Func<SubscriptionResource, AsyncPageable<T>> getResources) where T : ArmResource
     {
-        foreach (var resources in subscriptions.Select(getResources))
+        foreach (var subscription in subscriptions)
         {
-            await foreach (var resource in resources)
+            Console.WriteLine($"{subscription.Data.DisplayName}.GetAll<{typeof(T).Name}>");
+            var resources = getResources(subscription);
+            var enumerator = resources.GetAsyncEnumerator();
+            while (await enumerator.TryMoveNextAsync())
             {
-                yield return resource;
+                yield return enumerator.Current;
             }
+        }
+    }
+
+    private static async ValueTask<bool> TryMoveNextAsync<T>(this IAsyncEnumerator<T> enumerator)
+    {
+        try
+        {
+            return await enumerator.MoveNextAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Bam: {e.Message}");
+            return false;
         }
     }
 }

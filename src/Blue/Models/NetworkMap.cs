@@ -1,8 +1,8 @@
 using Azure.Core;
 using Azure.ResourceManager.DnsResolver;
 using Azure.ResourceManager.Network;
-using Azure.ResourceManager.PrivateDns;
 using Azure.ResourceManager.Resources;
+using Blue.Core;
 
 namespace Blue.Models;
 
@@ -11,7 +11,7 @@ public class NetworkMap
     public Dictionary<string, SubscriptionData> Subscriptions { get; init; } = new();
     public Dictionary<string, VirtualNetworkData> VirtualNetworks { get; init; } = new();
     public Dictionary<string, Vnet> Vnets { get; init; } = new();
-    public Dictionary<string, PrivateDnsZoneData> PrivateDnsZones { get; init; } = new();
+    public Dictionary<string, PrivateDnsZone> PrivateDnsZones { get; init; } = new();
     public Dictionary<string, DnsResolverData> DnsResolvers { get; init; } = new();
 }
 

@@ -14,32 +14,33 @@ public class NetworkController : Controller
     }
 
     [HttpGet("")]
-    public async Task<object> Index()
+    public async Task<object> Index([FromQuery] bool clearCache)
     {
-        var model = await _client.GetNetworkMapAsync(HttpContext.RequestAborted);
+        var model = await _client.GetNetworkMapAsync(clearCache, HttpContext.RequestAborted);
         return View(model);
     }
 
     [HttpGet("vnets")]
-    public async Task<object> VNets()
+    public async Task<object> VNets([FromQuery] bool clearCache)
     {
-        var model = await _client.GetNetworkMapAsync(HttpContext.RequestAborted);
+        var model = await _client.GetNetworkMapAsync(clearCache, HttpContext.RequestAborted);
         var entries = model.Vnets.Values
             .Select(v => new VNetModel { Name = v.Name, Cidrs = v.AddressPrefixes })
             .ToList();
         return View(entries);
     }
 
-    [HttpGet("map")]
-    public async Task<object> Map()
+    [HttpGet("dns")]
+    public async Task<object> Dns([FromQuery] bool clearCache)
     {
-        var model = await _client.GetNetworkMapAsync(HttpContext.RequestAborted);
+        var model = await _client.GetNetworkMapAsync(clearCache, HttpContext.RequestAborted);
+        return View(model);
+    }
+
+    [HttpGet("map")]
+    public async Task<object> Map([FromQuery] bool clearCache)
+    {
+        var model = await _client.GetNetworkMapAsync(clearCache, HttpContext.RequestAborted);
         return View(model);
     } 
-}
-
-public class VNetModel
-{
-    public required string Name { get; set; }
-    public string[] Cidrs { get; set; } = [];
 }
