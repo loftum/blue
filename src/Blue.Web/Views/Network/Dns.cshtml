@@ -1,0 +1,19 @@
+@model Blue.Models.NetworkMap
+
+<h1>Private DNS</h1>
+
+<ul class="no-bullets">
+@foreach (var (key, zone) in Model.PrivateDnsZones)
+{
+    <li>
+        @zone.Id.ResourceGroupName / @zone.Name
+        <ul>
+            @foreach (var link in zone.VirtualNetworkLinks)
+            {
+                <li>@link.VirtualNetworkId.ResourceGroupName / <b>@link.VirtualNetworkId.Name</b></li>
+            }
+        </ul>
+    </li>
+}
+
+</ul>

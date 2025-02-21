@@ -1,0 +1,54 @@
+:root {
+    --color-bg: #222222;
+    --color-fg: #bbbbbb;
+    --color-pri: #0099ff;
+    --color-pri-hover: #00bbff;
+}
+
+html {
+    font-family: monospace;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    box-sizing: border-box;
+}
+a {
+    color: var(--color-pri);
+    text-decoration: none;
+}
+a:hover{
+    color: var(--color-pri-hover);
+}
+
+
+ul {
+    
+}
+
+li {
+    margin-top: .5rem;
+}
+
+ul.no-bullets {
+    list-style-type: none;
+}
+
+.vnet {
+    background: lightgray;
+    border: 1px solid darkgray;
+    box-sizing: border-box;
+}
+
+.vnet-canvas {
+    height: 100%;
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--color-fg);
+}
+
+.flex {
+    display: flex;
+}
+
+.flex.vertical {
+    flex-direction: column;
+}

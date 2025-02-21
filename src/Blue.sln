@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blue.Web", "Blue.Web\Blue.Web.csproj", "{A9F3FE9D-878D-4BAF-8846-0072449FE623}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blue", "Blue\Blue.csproj", "{64CECDA3-D1E8-4DF5-8024-CDFE95F88438}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A9F3FE9D-878D-4BAF-8846-0072449FE623}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9F3FE9D-878D-4BAF-8846-0072449FE623}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9F3FE9D-878D-4BAF-8846-0072449FE623}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9F3FE9D-878D-4BAF-8846-0072449FE623}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64CECDA3-D1E8-4DF5-8024-CDFE95F88438}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64CECDA3-D1E8-4DF5-8024-CDFE95F88438}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64CECDA3-D1E8-4DF5-8024-CDFE95F88438}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64CECDA3-D1E8-4DF5-8024-CDFE95F88438}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,174 @@
+@model List<Blue.Web.Controllers.VNetModel>
+
+<style>
+    :root {
+        font-family: "Arial",serif;
+        margin: 0;
+        padding: 0;
+    }
+    html,
+    body {
+        box-sizing: border-box;
+        margin: 0;
+        min-width: 8192px;
+        min-height: 8192px;
+    }
+    
+    html {
+        background: #eeeeee;
+    }
+    v-net {
+        border-radius: 5px;
+        padding: 0;
+        border: 1px solid #eeeeee;
+        background: white;
+        color: #eeeeee;
+        margin: 3px;
+    }
+    
+    v-net.registered {
+        border: 1px solid black;
+        color: black;
+    }
+    v-net.conflict {
+        border: 3px solid #ffa000;
+        background: #ffc099;
+    }
+    v-net.hovered {
+        background: lightblue;
+        color: #333333;
+    }
+    v-net.highlighted {
+        background: pink;
+    }
+    v-net-table {
+        background: #ffffcc;
+        position: fixed;
+        min-height: 100px;
+        min-width: 100px;
+        bottom: 0;
+        left: 0;
+        border: 1px solid gray;
+        border-radius: 5px;
+    }
+    v-net-table > td {
+        border: 0;
+    }
+    tr.highlighted {
+        background: pink;
+    }
+    
+</style>
+
+<div id="zoomer" style="width: 100%; height: 100%; box-sizing: border-box">
+    <v-net id="net" cidr="10.0.0.0/8" name="all">
+            
+    </v-net>
+</div>
+<v-net-table>
+
+</v-net-table>
+
+<script src="/content/vnet.js"></script>
+<script>
+    
+(function() {
+    
+    const model = VNetModel.load(@Html.Raw(Json.Serialize(Model)));
+    
+    document.getElementById("net").model = model;
+    document.getElementsByTagName("v-net-table")[0].model = model;
+    
+    const body = document.getElementsByTagName("v-net")[0];
+    zoomer(body);
+    
+    function zoomer(body) {
+        const isMac = window.navigator.userAgent.indexOf("Mac") !== -1;
+
+        let metaPressed = false;
+
+        document.addEventListener("keydown", function(e) {
+            metaPressed = isMac ? e.metaKey : e.ctrlKey;
+
+            if (!metaPressed) {
+                console.log("meta")
+                return;
+            }
+
+            switch(e.key){
+                case "0":
+                    e.preventDefault();
+                    resetZoom();
+                    break;
+                case "+":
+                    e.preventDefault();
+                    zoom(speed);
+                    break;
+                case "-":
+                    e.preventDefault();
+                    zoom(-speed);
+                    break;
+                case "s":
+                    e.preventDefault();
+                    model.save();
+                    break;
+            }
+
+        });
+
+        document.addEventListener("keyup", function(e) {
+            if (isMac && e.key === "Meta") {
+                metaPressed = false;
+            }
+            else if (e.key === "Control"){
+                metaPressed = false;
+            }
+        });
+
+        let currentZoom = 1;
+        let translateX = 0;
+        let translateY = 0;
+        const factor = 1;
+        const speed = .015;
+        
+        
+        document.addEventListener("wheel", function(e) {
+            
+            if (!metaPressed){
+                return;
+            }
+            if (e.deltaY < 0) {
+                zoom(-e.deltaY / 314, e);
+            }
+            else {
+                zoom(-e.deltaY / 314, e);
+            }
+        });
+        
+        function resetZoom() {
+            body.style.transform = "";
+        }
+
+        
+        
+        function zoom(delta, e) {
+            
+            if (delta > 0 && currentZoom >= 4 || delta < 0 && currentZoom <= 0) {
+                return;
+            }
+            const nextZoom = currentZoom + delta * factor;
+            const ratio = 1 - nextZoom / currentZoom;
+
+            // hmm..
+            translateX += (e.clientX - translateX) * ratio * 1.1;
+            translateY += (e.clientY - translateY) * ratio * 1.1;
+                        
+            console.log(`clientX: ${e.clientX} clientY: ${e.clientY} translateX: ${translateX} translateY: ${translateY}`);
+            
+            body.style.transform = `translate(${translateX}px, ${translateY}px) scale(${nextZoom})`;
+
+            currentZoom = nextZoom;
+        }
+    }
+})();
+</script>

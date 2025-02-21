@@ -1,0 +1,44 @@
+@using Blue.Models
+@model Blue.Models.NetworkMap
+
+@{
+    string Map(PeeringDirection direction)
+    {
+        return direction switch
+        {
+            PeeringDirection.Forward => "-->",
+            PeeringDirection.Backward => "<--",
+            PeeringDirection.BothWays => "<->",
+            PeeringDirection.None => "N/A",
+            PeeringDirection.Unknown => "???"
+        };
+    }
+}
+
+<ul class="no-bullets">
+    @foreach (var (id, vnet) in Model.Vnets)
+    {
+        <li>
+            @id
+            @vnet.Id.ResourceGroupName/<b>@vnet.Name</b>: @string.Join(", ", vnet.AddressPrefixes)
+            @if (vnet.Peerings.Count > 0)
+            {
+                <ul class="no-bullets">
+                    @foreach (var peering in vnet.Peerings)
+                    {
+                        <li>
+                            p-2-@peering.RemoteVnetId.Name:
+                            <ul class="no-bullets">
+                                <li>Traffic: @Map(peering.Traffic)</li>
+                                <li>VnetAccess: @Map(peering.VnetAccess)</li>
+                                <li>GW transit: @Map(peering.GatewayTransit)</li>
+                                <li>Use remote GWs: @Map(peering.RemoteGateways)</li>
+                            </ul>
+                        </li>
+                    }
+                </ul>
+            }
+
+        </li>
+    }
+</ul>
