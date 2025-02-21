@@ -7,8 +7,20 @@
 (function () {
     const model = @Html.Raw(Json.Serialize(Model));
     const canvas = document.getElementById("map");
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = "red";
-    ctx.fillRect(0, 0, 150, 75);
+    
+    
+    let x=0;
+    for (const [id, vnet] of Object.entries(model.vnets)) {
+        ctx.rect(x * 40, 10, 30, 30);
+        ctx.stroke();
+        x++;
+    }
+    
 })();
 </script>
