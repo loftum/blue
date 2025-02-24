@@ -60,11 +60,15 @@
     
 </style>
 
-<div id="zoomer" style="width: 100vw; height: 100vh;  box-sizing: border-box; overflow: scroll;">
-    <v-net id="net" cidr="10.0.0.0/8" name="all" style="left:0; top: 0;">
+<v-net id="net" cidr="10.0.0.0/8" name="all" style="left:0; top: 0;">
 
-    </v-net>
-</div>
+</v-net>
+
+@* <div id="zoomer" style="width: 100vw; height: 100vh; box-sizing: border-box; overflow: scroll;"> *@
+@*     <v-net id="net" cidr="10.0.0.0/8" name="all" style="left:0; top: 0;"> *@
+@* *@
+@*     </v-net> *@
+@* </div> *@
 <v-net-table>
 
 </v-net-table>
@@ -93,7 +97,6 @@
             metaPressed = isMac ? e.metaKey : e.ctrlKey;
 
             if (!metaPressed) {
-                console.log("meta")
                 return;
             }
 
@@ -118,60 +121,50 @@
 
         });
 
-        document.addEventListener("keyup", function(e) {
-            if (isMac && e.key === "Meta") {
-                metaPressed = false;
-            }
-            else if (e.key === "Control"){
-                metaPressed = false;
-            }
-        });
-
         let currentZoom = 1;
-        let translateX = 0;
-        let translateY = 0;
-        const factor = 1;
         const speed = .015;
 
-
         document.addEventListener("wheel", function(e) {
-
-            if (!metaPressed){
+            
+            if (isMac && !e.metaKey || !isMac && !e.ctrlKey) {
                 return;
             }
-            if (e.deltaY < 0) {
-                zoom(-e.deltaY / 314, e);
-            }
-            else {
-                zoom(-e.deltaY / 314, e);
-            }
+            zoom(-e.deltaY / 314, e);
         });
 
         function resetZoom() {
+            currentZoom = 1;
             body.style.transform = "";
         }
 
         function zoom(delta, e) {
-
-            if (delta > 0 && currentZoom >= 4 || delta < 0 && currentZoom <= 0) {
+            
+            if (delta > 0 && currentZoom >= 4 || delta < 0 && currentZoom <= .1) {
                 return;
             }
-            const nextZoom = currentZoom + delta * factor;
-            const ratio = 1 - nextZoom / currentZoom;
 
-            // hmm..
-            translateX += (e.clientX - translateX) * ratio * 1.1;
-            translateY += (e.clientY - translateY) * ratio * 1.1;
-
-            console.log(`x: ${e.x} y: ${e.y} clientX: ${e.clientX} clientY: ${e.clientY} translateX: ${translateX} translateY: ${translateY}`);
-
-            //body.style.transform = `translate(${translateX}px, ${translateY}px) scale(${nextZoom})`;
-            body.style.transform = `scale(${nextZoom})`;
-            body.style.transformOrigin = "top left";
+            const p = body.parentElement;
             
-            //body.parentElement.scrollBy(e.x, e.y);
+            currentZoom += delta;
 
-            currentZoom = nextZoom;
+            body.style.transform = `scale(${currentZoom})`;
+            body.style.transformOrigin = "top left";
+
+            // This is what the scrollparent already scrolled, towards top left.
+            const scrolledX = delta * p.offsetWidth;
+            const scrolledY = delta * p.offsetHeight;
+            
+            const width = p.offsetWidth / 2;
+            const height = p.offsetHeight / 2;
+            
+            // We are scrolling the same amount as the parent did + whatever mouse pointer indicates from the center.
+            // (Minus is towards top left. So we do plus)
+            const scrollX = (e.x - width) / width * scrolledX + scrolledX;
+            const scrollY = (e.y - height) / height * scrolledY + scrolledY;
+            
+            console.log(`delta: ${delta} scrolledX: ${scrolledX} scrolledY: ${scrolledY} scrollX: ${scrollX} scrollY: ${scrollY}`);
+            p.scrollBy(scrollX, scrollY);
+            
         }
     }
 })();
