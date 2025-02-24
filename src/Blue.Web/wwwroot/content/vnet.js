@@ -467,12 +467,12 @@ class VNetElement extends HTMLElement {
                 this.range = range;
             }
             const dimension = this.dimension;
-            this.style.position = "absolute";
+            // this.style.position = "absolute";
             this.style.display = "block";
             this.style.minHeight = `${dimension.height}px`;
             this.style.minWidth = `${dimension.width}px`;
-            this.style.top = `${dimension.height / 2}px`;
-            this.style.left = `${dimension.width / 2}px`;
+            // this.style.top = `${dimension.height / 2}px`;
+            // this.style.left = `${dimension.width / 2}px`;
         }
         
 

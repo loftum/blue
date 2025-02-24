@@ -10,8 +10,8 @@
     body {
         box-sizing: border-box;
         margin: 0;
-        min-width: 8192px;
-        min-height: 8192px;
+        /*min-width: 8192px;*/
+        /*min-height: 8192px;*/
     }
     
     html {
@@ -60,9 +60,9 @@
     
 </style>
 
-<div id="zoomer" style="width: 100%; height: 100%; box-sizing: border-box">
-    <v-net id="net" cidr="10.0.0.0/8" name="all">
-            
+<div id="zoomer" style="width: 100vw; height: 100vh;  box-sizing: border-box; overflow: scroll;">
+    <v-net id="net" cidr="10.0.0.0/8" name="all" style="left:0; top: 0;">
+
     </v-net>
 </div>
 <v-net-table>
@@ -71,17 +71,19 @@
 
 <script src="/content/vnet.js"></script>
 <script>
-    
+
 (function() {
-    
+
     const model = VNetModel.load(@Html.Raw(Json.Serialize(Model)));
-    
+
     document.getElementById("net").model = model;
     document.getElementsByTagName("v-net-table")[0].model = model;
+
     
     const body = document.getElementsByTagName("v-net")[0];
-    zoomer(body);
     
+    zoomer(body);
+
     function zoomer(body) {
         const isMac = window.navigator.userAgent.indexOf("Mac") !== -1;
 
@@ -130,10 +132,10 @@
         let translateY = 0;
         const factor = 1;
         const speed = .015;
-        
-        
+
+
         document.addEventListener("wheel", function(e) {
-            
+
             if (!metaPressed){
                 return;
             }
@@ -144,15 +146,13 @@
                 zoom(-e.deltaY / 314, e);
             }
         });
-        
+
         function resetZoom() {
             body.style.transform = "";
         }
 
-        
-        
         function zoom(delta, e) {
-            
+
             if (delta > 0 && currentZoom >= 4 || delta < 0 && currentZoom <= 0) {
                 return;
             }
@@ -162,10 +162,14 @@
             // hmm..
             translateX += (e.clientX - translateX) * ratio * 1.1;
             translateY += (e.clientY - translateY) * ratio * 1.1;
-                        
-            console.log(`clientX: ${e.clientX} clientY: ${e.clientY} translateX: ${translateX} translateY: ${translateY}`);
+
+            console.log(`x: ${e.x} y: ${e.y} clientX: ${e.clientX} clientY: ${e.clientY} translateX: ${translateX} translateY: ${translateY}`);
+
+            //body.style.transform = `translate(${translateX}px, ${translateY}px) scale(${nextZoom})`;
+            body.style.transform = `scale(${nextZoom})`;
+            body.style.transformOrigin = "top left";
             
-            body.style.transform = `translate(${translateX}px, ${translateY}px) scale(${nextZoom})`;
+            //body.parentElement.scrollBy(e.x, e.y);
 
             currentZoom = nextZoom;
         }
