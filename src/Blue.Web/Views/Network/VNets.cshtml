@@ -60,15 +60,11 @@
     
 </style>
 
-<v-net id="net" cidr="10.0.0.0/8" name="all" style="left:0; top: 0;">
+<div id="zoomer" style="width: 100vw; height: 100vh; box-sizing: border-box; overflow: scroll;">
+    <v-net id="net" cidr="10.0.0.0/8" name="all" style="margin:1000px;">
 
-</v-net>
-
-@* <div id="zoomer" style="width: 100vw; height: 100vh; box-sizing: border-box; overflow: scroll;"> *@
-@*     <v-net id="net" cidr="10.0.0.0/8" name="all" style="left:0; top: 0;"> *@
-@* *@
-@*     </v-net> *@
-@* </div> *@
+    </v-net>
+</div>
 <v-net-table>
 
 </v-net-table>
@@ -85,7 +81,7 @@
 
     
     const body = document.getElementsByTagName("v-net")[0];
-    
+    const p = body.parentElement;
     zoomer(body);
 
     function zoomer(body) {
@@ -142,8 +138,6 @@
             if (delta > 0 && currentZoom >= 4 || delta < 0 && currentZoom <= .1) {
                 return;
             }
-
-            const p = body.parentElement;
             
             currentZoom += delta;
 
@@ -164,8 +158,8 @@
             
             console.log(`delta: ${delta} scrolledX: ${scrolledX} scrolledY: ${scrolledY} scrollX: ${scrollX} scrollY: ${scrollY}`);
             p.scrollBy(scrollX, scrollY);
-            
         }
+        p.scroll(1000, 1000);
     }
 })();
 </script>
