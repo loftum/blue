@@ -27,8 +27,10 @@
                     @foreach (var peering in vnet.Peerings)
                     {
                         <li>
-                            p-2-@peering.RemoteVnetId.Name:
+                            @peering.RemoteVnetId.Name:
                             <ul class="no-bullets">
+                                <li>id: @peering.Id</li>
+                                <li>remoteId: @peering.RemoteId</li>
                                 <li>Traffic: @Map(peering.Traffic)</li>
                                 <li>VnetAccess: @Map(peering.VnetAccess)</li>
                                 <li>GW transit: @Map(peering.GatewayTransit)</li>

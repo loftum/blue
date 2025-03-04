@@ -32,6 +32,7 @@ public static class BlueClientExtensions
                     {
                         vnet.Peerings.Add(new VnetPeering
                         {
+                            Id = peering.Id,
                             Name = peering.Name,
                             RemoteVnetId = peering.RemoteVirtualNetworkId,
                             Traffic = GetDirection(peering.AllowForwardedTraffic),
@@ -44,6 +45,8 @@ public static class BlueClientExtensions
                     {
                         vnet.Peerings.Add(new VnetPeering
                         {
+                            Id = peering.Id,
+                            RemoteId = remotePeering.Id,
                             Name = peering.Name,
                             RemoteVnetId = peering.RemoteVirtualNetworkId,
                             Traffic = GetDirection(peering.AllowForwardedTraffic, remotePeering.AllowForwardedTraffic),

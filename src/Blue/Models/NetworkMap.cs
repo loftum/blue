@@ -31,6 +31,8 @@ public class VnetPeering
     public PeeringDirection GatewayTransit { get; init; }
     public PeeringDirection RemoteGateways { get; init; }
     public required ResourceIdentifier RemoteVnetId { get; init; }
+    public required ResourceIdentifier Id { get; set; }
+    public ResourceIdentifier? RemoteId { get; set; }
 }
 
 public enum PeeringDirection
