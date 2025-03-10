@@ -1,5 +1,5 @@
 @using Blue.Models
-@model Blue.Models.NetworkMap
+@model Blue.Models.NetworkResources
 
 @{
     string Map(PeeringDirection direction)
@@ -30,11 +30,10 @@
                             @peering.RemoteVnetId.Name:
                             <ul class="no-bullets">
                                 <li>id: @peering.Id</li>
-                                <li>remoteId: @peering.RemoteId</li>
-                                <li>Traffic: @Map(peering.Traffic)</li>
+                                <li>remoteId: @peering.RemotePeeringId</li>
+                                <li>Traffic: @Map(peering.ForwardedTraffic)</li>
                                 <li>VnetAccess: @Map(peering.VnetAccess)</li>
-                                <li>GW transit: @Map(peering.GatewayTransit)</li>
-                                <li>Use remote GWs: @Map(peering.RemoteGateways)</li>
+                                <li>GW traffic: @Map(peering.GatewayTraffic)</li>
                             </ul>
                         </li>
                     }

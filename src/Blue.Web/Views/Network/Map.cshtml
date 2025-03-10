@@ -1,26 +1,42 @@
-@model Blue.Models.NetworkMap
+@model Blue.Models.NetworkGraph
 
-<canvas id="map" class="vnet-canvas" style="height:100%; width: 100%;">
+<div id="network" style="width:100vw; height:  100vh;">
     
-</canvas>
+</div>
+
+<link rel="stylesheet" href="/content/vis/vis-network.css" />
+<script src="/content/vis/vis-network.min.js"></script>
 <script>
 (function () {
-    const model = @Html.Raw(Json.Serialize(Model));
-    const canvas = document.getElementById("map");
-    
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "red";
-    
-    
-    let x=0;
-    for (const [id, vnet] of Object.entries(model.vnets)) {
-        ctx.rect(x * 40, 10, 30, 30);
-        ctx.stroke();
-        x++;
-    }
-    
+  const container = document.getElementById('network');
+  const data = @Html.Raw(Json.Serialize(Model));
+    const options = {
+      layout: {
+        // Makes the graph consistent every time
+        randomSeed: 0,
+        hierarchical: {
+          enabled: false,
+          sortMethod: "directed"
+        }
+      },
+      interaction: {
+        zoomSpeed: .5
+      },
+      physics: {
+        enabled: true,
+        barnesHut: {
+          avoidOverlap: 0
+        },
+        stabilization: {
+          enabled: true,
+          iterations: 1000,
+          updateInterval: 50
+        }
+      }
+    };
+
+    const network = new vis.Network(container, data, options)
+    .on("stabilized", () => network.setOptions({physics:false}));
+
 })();
 </script>
