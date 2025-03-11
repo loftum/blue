@@ -86,7 +86,7 @@ public static class BlueClientExtensions
                 ResourceType = "vnet",
                 Id = vnet.Id.ToString(),
                 Label = vnet.Name,
-                Shape = "box",
+                Shape = "ellipsis",
                 Group = subscription?.DisplayName,
                 Title = subscription == null
                     ? vnet.Id.ResourceGroupName
