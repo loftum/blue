@@ -9,6 +9,7 @@ public class NetworkGraph
 public class GraphNode
 {
     public required string Id { get; init; }
+    public required string ResourceType { get; set; }
     public required string Label { get; init; }
     public string? Shape { get; init; }
     public string? Group { get; set; }

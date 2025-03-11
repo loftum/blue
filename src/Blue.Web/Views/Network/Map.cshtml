@@ -1,8 +1,11 @@
 @model Blue.Models.NetworkGraph
 
-<div id="network" style="width:100vw; height:  100vh;">
+<div id="network" style="width:100%; height: 100vh;">
     
 </div>
+<ul id="filter" style="position: fixed;" class="no-bullets">
+    
+</ul>
 
 <link rel="stylesheet" href="/content/vis/vis-network.css" />
 <script src="/content/vis/vis-network.min.js"></script>
@@ -10,33 +13,63 @@
 (function () {
   const container = document.getElementById('network');
   const data = @Html.Raw(Json.Serialize(Model));
-    const options = {
-      layout: {
-        // Makes the graph consistent every time
-        randomSeed: 0,
-        hierarchical: {
-          enabled: false,
-          sortMethod: "directed"
-        }
-      },
-      interaction: {
-        zoomSpeed: .5
-      },
-      physics: {
-        enabled: true,
-        barnesHut: {
-          avoidOverlap: 0
-        },
-        stabilization: {
-          enabled: true,
-          iterations: 1000,
-          updateInterval: 50
-        }
+  
+  const resourceTypes = data.nodes
+  .map(n => n.resourceType)
+  .filter((value, index, self ) => self.indexOf(value) === index);
+  
+  const filter = document.getElementById("filter");
+  resourceTypes.forEach(type => {
+    const li = document.createElement("li");
+    
+    li.innerHTML = `<input name="${type}" type="checkbox" checked="true"></input><label for="${type}">${type}</label>`;
+    filter.appendChild(li);
+    const checkbox = li.getElementsByTagName("input")[0];
+    checkbox.checked = type === "vnet";
+    checkbox.addEventListener("change", e => showResourceType(type, e.currentTarget.checked));
+  });
+  
+  function showResourceType(type, show) {
+    data.nodes.filter(n => n.resourceType === type).forEach(n => {
+      n.hidden = show === false
+    });
+    network.setData(data);
+  }
+  
+  const options = {
+    layout: {
+      // Makes the graph consistent every time
+      randomSeed: 0,
+      hierarchical: {
+        enabled: false,
+        sortMethod: "directed"
       }
-    };
+    },
+    interaction: {
+      zoomSpeed: .5,
+      multiselect: true,
+      navigationButtons: false
+    },
+    physics: {
+      enabled: true,
+      barnesHut: {
+        avoidOverlap: 0
+      },
+      stabilization: {
+        enabled: true,
+        iterations: 3140,
+        updateInterval: 50,
+        fit: false
+      }
+    }
+  };
+  
+  data.nodes.filter(n => n.resourceType !== "vnet").forEach(n => {
+    n.hidden = true;
+  });
 
-    const network = new vis.Network(container, data, options)
-    .on("stabilized", () => network.setOptions({physics:false}));
+  const network = new vis.Network(container, data, options)
+  .on("stabilized", () => network.setOptions({physics:false}));
 
 })();
 </script>

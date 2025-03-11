@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Azure.Core;
 using Blue.Models;
 
 namespace Blue.Core;
@@ -82,6 +83,7 @@ public static class BlueClientExtensions
             
             var node = new GraphNode
             {
+                ResourceType = "vnet",
                 Id = vnet.Id.ToString(),
                 Label = vnet.Name,
                 Shape = "box",
@@ -118,7 +120,69 @@ public static class BlueClientExtensions
             }
         }
 
+        foreach (var dns in resources.PrivateDnsZones.Values.GroupBy(d => new DnsKey(d)))
+        {
+            var subscription = resources.Subscriptions.Values.FirstOrDefault(s => s.SubscriptionId == dns.Key.SubscriptionId);
+            
+            var node = new GraphNode
+            {
+                ResourceType = "private dns",
+                Id = Guid.NewGuid().ToString("N"),
+                Label = string.Join('\n', dns.Select(d => d.Name)),
+                Shape = "box",
+                Group = subscription?.DisplayName,
+                Title = subscription == null
+                    ? dns.Key.ResourceGroupName
+                    :$"{subscription.DisplayName} / {dns.Key.ResourceGroupName}"
+            };
+            graph.Nodes.Add(node);
+
+            foreach (var vnetId in dns.Key.VnetIds)
+            {
+                graph.Edges.Add(new GraphEdge
+                {
+                    Id = Guid.NewGuid().ToString("N"),
+                    From = node.Id,
+                    To = vnetId.ToString(),
+                    Color = "#cccccc"
+                });
+            }
+        }
+
         return graph;
+    }
+
+    private sealed class DnsKey
+    {
+        public string? SubscriptionId { get; }
+        public string? ResourceGroupName { get; }
+        public string VnetIdsString { get; }
+        public ResourceIdentifier[] VnetIds { get; }
+        public DnsKey(PrivateDnsZone zone)
+        {
+            SubscriptionId = zone.Id.SubscriptionId;
+            ResourceGroupName = zone.Id.ResourceGroupName;
+            VnetIds = zone.VirtualNetworkLinks.Select(l => l.VirtualNetworkId).ToArray();
+            VnetIdsString = string.Join(",", VnetIds.Select(i => i.ToString()));
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as DnsKey);
+        }
+
+        public bool Equals(DnsKey? other)
+        {
+            return other != null &&
+                   SubscriptionId == other.SubscriptionId &&
+                   ResourceGroupName == other.ResourceGroupName &&
+                   VnetIdsString == other.VnetIdsString;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(SubscriptionId, ResourceGroupName, VnetIdsString);
+        }
     }
 
     private static bool TryGetEdge(this VnetPeering peering, PeeringDirection direction, string title, string color, [MaybeNullWhen(false)] out GraphEdge edge)
