@@ -144,7 +144,8 @@ public static class BlueClientExtensions
                     Id = Guid.NewGuid().ToString("N"),
                     From = node.Id,
                     To = vnetId.ToString(),
-                    Color = "#cccccc"
+                    Color = "#cccccc",
+                    Title = "private DNS link"
                 });
             }
         }

@@ -34,6 +34,7 @@
       n.hidden = show === false
     });
     network.setData(data);
+    network.stabilize();
   }
   
   const options = {
@@ -59,7 +60,7 @@
         enabled: true,
         iterations: 3140,
         updateInterval: 50,
-        fit: false
+        fit: true
       }
     }
   };
